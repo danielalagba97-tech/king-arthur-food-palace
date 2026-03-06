@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { addOrder } from "../data/orders";
 import logo from "../assets/images/logo.png";
 
 function Order() {
 
   const [orderType, setOrderType] = useState("");
+  const [showWhatsapp, setShowWhatsapp] = useState(false);
+  const [whatsappLink, setWhatsappLink] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -22,23 +25,71 @@ function Order() {
     });
   };
 
-  const handlePaymentChange = (e) => {
-    setFormData({
-      ...formData,
-      payment: e.target.value
-    });
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (!orderType) {
+      alert("Please select Delivery or Pickup");
+      return;
+    }
+
+    const orderData = {
+      id: Date.now(),
+      name: formData.name,
+      phone: formData.phone,
+      meal: formData.meal,
+      quantity: formData.quantity,
+      location: formData.location,
+      note: formData.note,
+      payment: formData.payment,
+      orderType: orderType,
+      status: "Pending",
+      time: new Date().toLocaleString()
+    };
+
+    addOrder(orderData);
+
+    const message = `
+NEW ORDER
+
+Name: ${formData.name}
+Phone: ${formData.phone}
+Meal: ${formData.meal}
+Quantity: ${formData.quantity}
+Type: ${orderType}
+Location: ${formData.location}
+Payment: ${formData.payment}
+Note: ${formData.note}
+`;
+
+    const whatsappNumber = "2349132665527";
+
+    const whatsappURL =
+      "https://wa.me/" +
+      whatsappNumber +
+      "?text=" +
+      encodeURIComponent(message);
+
+    setWhatsappLink(whatsappURL);
+    setShowWhatsapp(true);
+
     alert(
-      orderType === "pickup"
+      orderType === "Pickup"
         ? "Order received! Your food will be ready in about 15–25 minutes."
-        : "Order received! Our delivery team will contact you shortly."
+        : "Order received! Delivery usually takes about 20–35 minutes."
     );
 
-    console.log(orderType, formData);
+    setFormData({
+      name: "",
+      phone: "",
+      meal: "",
+      quantity: 1,
+      location: "",
+      note: "",
+      payment: ""
+    });
+
+    setOrderType("");
   };
 
   return (
@@ -47,10 +98,9 @@ function Order() {
         padding: "60px",
         minHeight: "100vh",
         color: "white",
-        backgroundImage: `linear-gradient(rgba(0,0,0,0.92), rgba(0,0,0,0.92)), url(${logo})`,
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url(${logo})`,
         backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat"
+        backgroundPosition: "center"
       }}
     >
 
@@ -64,8 +114,8 @@ function Order() {
         Place Your Order 🍔
       </h1>
 
+      {/* DELIVERY OR PICKUP */}
 
-      {/* Delivery / Pickup */}
       <div
         style={{
           display: "flex",
@@ -74,37 +124,39 @@ function Order() {
           marginBottom: "40px"
         }}
       >
+
         <button
-          onClick={() => setOrderType("delivery")}
+          type="button"
+          onClick={() => setOrderType("Delivery")}
           style={{
             padding: "12px 25px",
-            background: orderType === "delivery" ? "gold" : "#111",
-            color: orderType === "delivery" ? "black" : "white",
+            background: orderType === "Delivery" ? "gold" : "#111",
+            color: orderType === "Delivery" ? "black" : "white",
             border: "1px solid gold",
-            borderRadius: "6px",
-            cursor: "pointer"
+            borderRadius: "6px"
           }}
         >
           Delivery
         </button>
 
         <button
-          onClick={() => setOrderType("pickup")}
+          type="button"
+          onClick={() => setOrderType("Pickup")}
           style={{
             padding: "12px 25px",
-            background: orderType === "pickup" ? "gold" : "#111",
-            color: orderType === "pickup" ? "black" : "white",
+            background: orderType === "Pickup" ? "gold" : "#111",
+            color: orderType === "Pickup" ? "black" : "white",
             border: "1px solid gold",
-            borderRadius: "6px",
-            cursor: "pointer"
+            borderRadius: "6px"
           }}
         >
           Pickup
         </button>
+
       </div>
 
-
       {orderType && (
+
         <form
           onSubmit={handleSubmit}
           style={{
@@ -113,7 +165,7 @@ function Order() {
             display: "flex",
             flexDirection: "column",
             gap: "20px",
-            background: "rgba(0,0,0,0.8)",
+            background: "rgba(0,0,0,0.85)",
             padding: "30px",
             borderRadius: "10px",
             border: "1px solid gold"
@@ -125,6 +177,7 @@ function Order() {
             name="name"
             placeholder="Your Name"
             required
+            value={formData.name}
             onChange={handleChange}
             style={inputStyle}
           />
@@ -134,6 +187,7 @@ function Order() {
             name="phone"
             placeholder="Phone Number"
             required
+            value={formData.phone}
             onChange={handleChange}
             style={inputStyle}
           />
@@ -141,6 +195,7 @@ function Order() {
           <select
             name="meal"
             required
+            value={formData.meal}
             onChange={handleChange}
             style={inputStyle}
           >
@@ -159,93 +214,63 @@ function Order() {
             type="number"
             name="quantity"
             min="1"
-            placeholder="Quantity"
+            value={formData.quantity}
             onChange={handleChange}
             style={inputStyle}
           />
 
-
-          {/* Delivery Section */}
-          {orderType === "delivery" && (
-            <>
-              <input
-                type="text"
-                name="location"
-                placeholder="Delivery Address"
-                required
-                onChange={handleChange}
-                style={inputStyle}
-              />
-
-              <div style={infoBox}>
-                🚚 Delivery usually takes **20–35 minutes** depending on your location.
-              </div>
-            </>
+          {orderType === "Delivery" && (
+            <input
+              type="text"
+              name="location"
+              placeholder="Delivery Address / Landmark"
+              required
+              value={formData.location}
+              onChange={handleChange}
+              style={inputStyle}
+            />
           )}
-
-
-          {/* Pickup Section */}
-          {orderType === "pickup" && (
-            <div style={infoBox}>
-              ⏱ Your order will be ready in **15–25 minutes**.
-              <br />
-              📍 Pick up at **King Arthur Food Palace,
-              Jehovah Witness Street, NDU Amassoma.**
-            </div>
-          )}
-
 
           <textarea
             name="note"
             placeholder="Additional Instructions"
+            value={formData.note}
             onChange={handleChange}
-            style={{ ...inputStyle, height: "100px" }}
+            style={{
+              ...inputStyle,
+              height: "90px"
+            }}
           />
 
+          <select
+            name="payment"
+            required
+            value={formData.payment}
+            onChange={handleChange}
+            style={inputStyle}
+          >
+            <option value="">Select Payment Method</option>
+            <option value="pickup">Pay on Pickup / Delivery</option>
+            <option value="transfer">Bank Transfer</option>
+          </select>
 
-          {/* Payment Section */}
-          <div>
+          {formData.payment === "transfer" && (
 
-            <h3 style={{ color: "gold", marginBottom: "10px" }}>
-              Payment Method
-            </h3>
+            <div style={infoBox}>
 
-            <label style={{ display: "block", marginBottom: "10px" }}>
-              <input
-                type="radio"
-                value="delivery"
-                checked={formData.payment === "delivery"}
-                onChange={handlePaymentChange}
-              />
-              Pay on Delivery / Pickup
-            </label>
+              <h3 style={{ color: "gold" }}>Bank Transfer Details</h3>
 
-            <label style={{ display: "block", marginBottom: "10px" }}>
-              <input
-                type="radio"
-                value="transfer"
-                checked={formData.payment === "transfer"}
-                onChange={handlePaymentChange}
-              />
-              Bank Transfer
-            </label>
+              <p>Bank: Moniepoint</p>
+              <p>Account Name: King Arthur Food Palace</p>
+              <p>Account Number: 5377316915</p>
 
-            {formData.payment === "transfer" && (
-              <div style={infoBox}>
-                <strong style={{ color: "gold" }}>Bank Transfer Details</strong>
+              <p style={{ fontSize: "14px", color: "#ccc" }}>
+                After payment keep your receipt.
+              </p>
 
-                <p>Bank: Moniepoint</p>
-                <p>Account Name: King Arthur Food Palace</p>
-                <p>Account Number: 5377316915</p>
+            </div>
 
-                <p style={{ fontSize: "14px", color: "#ccc" }}>
-                  After transfer, please keep your receipt. Payment will be confirmed when your order is processed.
-                </p>
-              </div>
-            )}
-
-          </div>
-
+          )}
 
           <button
             type="submit"
@@ -263,7 +288,39 @@ function Order() {
           </button>
 
         </form>
+
       )}
+
+      {/* WhatsApp Button */}
+
+      {showWhatsapp && (
+
+        <div style={{ textAlign: "center", marginTop: "40px" }}>
+
+          <h2 style={{ color: "gold" }}>Order Saved Successfully</h2>
+
+          <a
+            href={whatsappLink}
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              display: "inline-block",
+              marginTop: "20px",
+              padding: "15px 30px",
+              background: "#25D366",
+              color: "white",
+              borderRadius: "8px",
+              fontWeight: "bold",
+              textDecoration: "none"
+            }}
+          >
+            Send Order to WhatsApp
+          </a>
+
+        </div>
+
+      )}
+
     </div>
   );
 }
