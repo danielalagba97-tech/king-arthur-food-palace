@@ -1,3 +1,4 @@
+import React from "react";
 function Contact() {
   return (
     <div
@@ -43,7 +44,6 @@ function Contact() {
           width="100%"
           height="350"
           style={{
-            border: "0",
             borderRadius: "10px",
             border: "2px solid gold"
           }}
