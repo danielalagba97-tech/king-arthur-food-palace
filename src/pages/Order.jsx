@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { addOrder } from "../data/orders";
+import { useLocation } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 
 function Order() {
+
+  const location = useLocation();
+
+  const preselectedMeal = location.state?.meal || "";
 
   const [orderType, setOrderType] = useState("");
   const [showWhatsapp, setShowWhatsapp] = useState(false);
@@ -11,7 +16,7 @@ function Order() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    meal: "",
+    meal: preselectedMeal,
     quantity: 1,
     location: "",
     note: "",
@@ -26,6 +31,7 @@ function Order() {
   };
 
   const handleSubmit = (e) => {
+
     e.preventDefault();
 
     if (!orderType) {
@@ -42,7 +48,7 @@ function Order() {
       location: formData.location,
       note: formData.note,
       payment: formData.payment,
-      orderType: orderType,
+      orderType,
       status: "Pending",
       time: new Date().toLocaleString()
     };
@@ -73,11 +79,7 @@ Note: ${formData.note}
     setWhatsappLink(whatsappURL);
     setShowWhatsapp(true);
 
-    alert(
-      orderType === "Pickup"
-        ? "Order received! Your food will be ready in about 15–25 minutes."
-        : "Order received! Delivery usually takes about 20–35 minutes."
-    );
+    alert("Order received successfully!");
 
     setFormData({
       name: "",
@@ -104,26 +106,13 @@ Note: ${formData.note}
       }}
     >
 
-      <h1
-        style={{
-          textAlign: "center",
-          color: "gold",
-          marginBottom: "40px"
-        }}
-      >
+      <h1 style={{ textAlign: "center", color: "gold", marginBottom: "40px" }}>
         Place Your Order 🍔
       </h1>
 
-      {/* DELIVERY OR PICKUP */}
+      {/* Delivery / Pickup */}
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          gap: "20px",
-          marginBottom: "40px"
-        }}
-      >
+      <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginBottom: "40px" }}>
 
         <button
           type="button"
@@ -199,7 +188,9 @@ Note: ${formData.note}
             onChange={handleChange}
             style={inputStyle}
           >
+
             <option value="">Select Meal</option>
+
             <option>Big Shawarma</option>
             <option>Jumbo Shawarma</option>
             <option>Super Jumbo Shawarma</option>
@@ -208,6 +199,7 @@ Note: ${formData.note}
             <option>Barbecue</option>
             <option>Jollof Rice + Chicken</option>
             <option>Fried Rice + Chicken</option>
+
           </select>
 
           <input
@@ -223,7 +215,7 @@ Note: ${formData.note}
             <input
               type="text"
               name="location"
-              placeholder="Delivery Address / Landmark"
+              placeholder="Delivery Address"
               required
               value={formData.location}
               onChange={handleChange}
@@ -236,10 +228,7 @@ Note: ${formData.note}
             placeholder="Additional Instructions"
             value={formData.note}
             onChange={handleChange}
-            style={{
-              ...inputStyle,
-              height: "90px"
-            }}
+            style={{ ...inputStyle, height: "90px" }}
           />
 
           <select
@@ -254,24 +243,6 @@ Note: ${formData.note}
             <option value="transfer">Bank Transfer</option>
           </select>
 
-          {formData.payment === "transfer" && (
-
-            <div style={infoBox}>
-
-              <h3 style={{ color: "gold" }}>Bank Transfer Details</h3>
-
-              <p>Bank: Moniepoint</p>
-              <p>Account Name: King Arthur Food Palace</p>
-              <p>Account Number: 5377316915</p>
-
-              <p style={{ fontSize: "14px", color: "#ccc" }}>
-                After payment keep your receipt.
-              </p>
-
-            </div>
-
-          )}
-
           <button
             type="submit"
             style={{
@@ -280,8 +251,7 @@ Note: ${formData.note}
               padding: "15px",
               border: "none",
               fontWeight: "bold",
-              borderRadius: "8px",
-              cursor: "pointer"
+              borderRadius: "8px"
             }}
           >
             Submit Order
@@ -291,28 +261,17 @@ Note: ${formData.note}
 
       )}
 
-      {/* WhatsApp Button */}
-
       {showWhatsapp && (
 
         <div style={{ textAlign: "center", marginTop: "40px" }}>
 
-          <h2 style={{ color: "gold" }}>Order Saved Successfully</h2>
+          <h2 style={{ color: "gold" }}>Order Saved</h2>
 
           <a
             href={whatsappLink}
             target="_blank"
             rel="noreferrer"
-            style={{
-              display: "inline-block",
-              marginTop: "20px",
-              padding: "15px 30px",
-              background: "#25D366",
-              color: "white",
-              borderRadius: "8px",
-              fontWeight: "bold",
-              textDecoration: "none"
-            }}
+            style={whatsappBtn}
           >
             Send Order to WhatsApp
           </a>
@@ -333,11 +292,15 @@ const inputStyle = {
   color: "white"
 };
 
-const infoBox = {
-  background: "#111",
-  border: "1px solid gold",
-  padding: "15px",
-  borderRadius: "6px"
+const whatsappBtn = {
+  display: "inline-block",
+  marginTop: "20px",
+  padding: "14px 30px",
+  background: "#25D366",
+  color: "white",
+  borderRadius: "8px",
+  fontWeight: "bold",
+  textDecoration: "none"
 };
 
 export default Order;
