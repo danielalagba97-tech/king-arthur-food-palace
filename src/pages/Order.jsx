@@ -3,6 +3,21 @@ import { addOrder } from "../data/orders";
 import { useLocation } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 
+/* Meal Prices */
+
+const mealPrices = {
+  "Big Shawarma": 3000,
+  "Jumbo Shawarma": 3500,
+  "Super Jumbo Shawarma": 4000,
+  "Burger": 3000,
+  "Chicken & Chips": 3500,
+  "Barbecue": 12000,
+  "Jollof Rice + Chicken": 3000,
+  "Fried Rice + Chicken": 3000,
+  "Meat Pie": 800,
+  "Cake": 1000
+};
+
 function Order() {
 
   const location = useLocation();
@@ -25,13 +40,20 @@ function Order() {
     payment: ""
   });
 
-  /* Auto add meal if coming from Menu */
+  /* Auto add meal from menu */
 
   useEffect(() => {
     if (preselectedMeal) {
       setCart([{ meal: preselectedMeal, quantity: 1 }]);
     }
   }, [preselectedMeal]);
+
+  /* Calculate total */
+
+  const total = cart.reduce((sum, item) => {
+    const price = mealPrices[item.meal] || 0;
+    return sum + price * item.quantity;
+  }, 0);
 
   const handleChange = (e) => {
     setFormData({
@@ -40,7 +62,7 @@ function Order() {
     });
   };
 
-  /* Add meal to cart */
+  /* Add meal */
 
   const addMeal = () => {
 
@@ -108,13 +130,17 @@ function Order() {
       payment: formData.payment,
       orderType,
       status: "Pending",
-      time: new Date().toLocaleString()
+      time: new Date().toLocaleString(),
+      total
     };
 
     addOrder(orderData);
 
     const mealList = cart
-      .map((item) => `${item.meal} x${item.quantity}`)
+      .map((item) => {
+        const price = mealPrices[item.meal] || 0;
+        return `${item.meal} x${item.quantity} - ₦${price * item.quantity}`;
+      })
       .join("\n");
 
     const message = `
@@ -125,6 +151,8 @@ Phone: ${formData.phone}
 
 Meals:
 ${mealList}
+
+Total: ₦${total}
 
 Type: ${orderType}
 Location: ${formData.location}
@@ -232,16 +260,9 @@ Note: ${formData.note}
 
               <option value="">Select Meal</option>
 
-              <option>Big Shawarma</option>
-              <option>Jumbo Shawarma</option>
-              <option>Super Jumbo Shawarma</option>
-              <option>Burger</option>
-              <option>Chicken & Chips</option>
-              <option>Barbecue</option>
-              <option>Jollof Rice + Chicken</option>
-              <option>Fried Rice + Chicken</option>
-              <option>Meat Pie</option>
-              <option>Cake</option>
+              {Object.keys(mealPrices).map((meal) => (
+                <option key={meal}>{meal}</option>
+              ))}
 
             </select>
 
@@ -271,23 +292,35 @@ Note: ${formData.note}
 
               <h3 style={{ color: "gold" }}>Your Order</h3>
 
-              {cart.map((item, index) => (
+              {cart.map((item, index) => {
 
-                <div key={index} style={{ display: "flex", justifyContent: "space-between" }}>
+                const price = mealPrices[item.meal] || 0;
 
-                  <p>{item.meal} x{item.quantity}</p>
+                return (
 
-                  <button
-                    type="button"
-                    onClick={() => removeItem(index)}
-                    style={removeBtn}
-                  >
-                    Remove
-                  </button>
+                  <div key={index} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
 
-                </div>
+                    <p>
+                      {item.meal} x{item.quantity} — ₦{price * item.quantity}
+                    </p>
 
-              ))}
+                    <button
+                      type="button"
+                      onClick={() => removeItem(index)}
+                      style={removeBtn}
+                    >
+                      Remove
+                    </button>
+
+                  </div>
+
+                );
+
+              })}
+
+              <h3 style={{ color: "gold", marginTop: "10px" }}>
+                Total: ₦{total}
+              </h3>
 
             </div>
 
@@ -425,4 +458,5 @@ const whatsappBtn = {
   fontWeight: "bold",
   textDecoration: "none"
 };
+
 export default Order;
