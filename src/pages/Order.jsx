@@ -425,5 +425,4 @@ const whatsappBtn = {
   fontWeight: "bold",
   textDecoration: "none"
 };
-
 export default Order;
