@@ -18,6 +18,24 @@ function Menu() {
     navigate("/order", { state: { meal } });
   };
 
+  /* reusable card */
+
+  const FoodCard = ({ image, name, price, meal }) => (
+    <div
+      style={cardStyle}
+      onClick={() => orderMeal(meal)}
+      onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
+      onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+    >
+      {image && <img src={image} alt={name} style={imageStyle} />}
+
+      <h3>{name}</h3>
+      <p>{price}</p>
+
+      <p style={orderHint}>Tap to Order</p>
+    </div>
+  );
+
   return (
     <div
       style={{
@@ -34,28 +52,22 @@ function Menu() {
         Our Menu 🍽️
       </h1>
 
-
       {/* SHAWARMA */}
 
       <h2 style={sectionTitle}>Shawarma</h2>
 
       <div style={gridStyle}>
 
-        <div
-          style={cardStyle}
-          onClick={() => orderMeal("Big Shawarma")}
-        >
-          <img src={shawarma} alt="Shawarma" style={imageStyle}/>
-          <h3>King Arthur Shawarma</h3>
-          <p>Big Size — ₦3,000</p>
-          <p>Jumbo Size — ₦3,500</p>
-          <p>Super Jumbo — ₦4,000</p>
-        </div>
+        <FoodCard
+          image={shawarma}
+          name="King Arthur Shawarma"
+          price="Big Size — ₦3,000 / Jumbo — ₦3,500 / Super Jumbo — ₦4,000"
+          meal="Big Shawarma"
+        />
 
       </div>
 
       <div className="menu-divider"></div>
-
 
       {/* FAST FOOD */}
 
@@ -63,55 +75,44 @@ function Menu() {
 
       <div style={gridStyle}>
 
-        <div
-          style={cardStyle}
-          onClick={() => orderMeal("Burger")}
-        >
-          <img src={kingarthurburger} alt="Burger" style={imageStyle}/>
-          <h3>Burger</h3>
-          <p>₦3,000</p>
-        </div>
+        <FoodCard
+          image={kingarthurburger}
+          name="Burger"
+          price="₦3,000"
+          meal="Burger"
+        />
 
-        <div
-          style={cardStyle}
-          onClick={() => orderMeal("Chicken & Chips")}
-        >
-          <img src={chickenandchips} alt="Chicken & Chips" style={imageStyle}/>
-          <h3>Chicken & Chips</h3>
-          <p>₦3,500</p>
-        </div>
+        <FoodCard
+          image={chickenandchips}
+          name="Chicken & Chips"
+          price="₦3,500"
+          meal="Chicken & Chips"
+        />
 
-        <div
-          style={cardStyle}
-          onClick={() => orderMeal("Barbecue")}
-        >
-          <img src={barbecue} alt="Barbecue" style={imageStyle}/>
-          <h3>Barbecue</h3>
-          <p>₦12,000</p>
-        </div>
+        <FoodCard
+          image={barbecue}
+          name="Barbecue"
+          price="₦12,000"
+          meal="Barbecue"
+        />
 
-        <div
-          style={cardStyle}
-          onClick={() => orderMeal("Meat Pie")}
-        >
-          <img src={meatpie} alt="Meat Pie" style={imageStyle}/>
-          <h3>Meat Pie</h3>
-          <p>₦800</p>
-        </div>
+        <FoodCard
+          image={meatpie}
+          name="Meat Pie"
+          price="₦800"
+          meal="Meat Pie"
+        />
 
-        <div
-          style={cardStyle}
-          onClick={() => orderMeal("Cake")}
-        >
-          <img src={cake} alt="Cake" style={imageStyle}/>
-          <h3>Cake</h3>
-          <p>₦1,000</p>
-        </div>
+        <FoodCard
+          image={cake}
+          name="Cake"
+          price="₦1,000"
+          meal="Cake"
+        />
 
       </div>
 
       <div className="menu-divider"></div>
-
 
       {/* RICE MEALS */}
 
@@ -119,28 +120,23 @@ function Menu() {
 
       <div style={gridStyle}>
 
-        <div
-          style={cardStyle}
-          onClick={() => orderMeal("Jollof Rice + Chicken")}
-        >
-          <img src={kingarthurjollof} alt="Jollof Rice" style={imageStyle}/>
-          <h3>Jollof Rice + Chicken + Water</h3>
-          <p>₦3,000</p>
-        </div>
+        <FoodCard
+          image={kingarthurjollof}
+          name="Jollof Rice + Chicken + Water"
+          price="₦3,000"
+          meal="Jollof Rice + Chicken"
+        />
 
-        <div
-          style={cardStyle}
-          onClick={() => orderMeal("Fried Rice + Chicken")}
-        >
-          <img src={friedrice} alt="Fried Rice" style={imageStyle}/>
-          <h3>Fried Rice + Chicken + Water</h3>
-          <p>₦3,000</p>
-        </div>
+        <FoodCard
+          image={friedrice}
+          name="Fried Rice + Chicken + Water"
+          price="₦3,000"
+          meal="Fried Rice + Chicken"
+        />
 
       </div>
 
       <div className="menu-divider"></div>
-
 
       {/* EXTRAS */}
 
@@ -148,13 +144,11 @@ function Menu() {
 
       <div style={gridStyle}>
 
-        <div
-          style={cardStyle}
-          onClick={() => orderMeal("Salad")}
-        >
-          <h3>Salad</h3>
-          <p>₦500</p>
-        </div>
+        <FoodCard
+          name="Salad"
+          price="₦500"
+          meal="Salad"
+        />
 
       </div>
 
@@ -206,5 +200,13 @@ const imageStyle = {
   marginBottom: "10px"
 };
 
+
+/* TAP LABEL */
+
+const orderHint = {
+  color: "#ccc",
+  fontSize: "13px",
+  marginTop: "8px"
+};
 
 export default Menu;
