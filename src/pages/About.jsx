@@ -36,7 +36,7 @@ function About() {
           King Arthur Food Palace is an eatery where we prioritize the satisfaction
           of all our esteemed customers. Located at Jehovah Witness Street,
           Niger Delta University (NDU), Amassoma, we are dedicated to serving
-          students and visitors with premium local and continental meals at
+          customers with premium local and continental meals at
           affordable prices.
         </p>
 
@@ -47,12 +47,12 @@ function About() {
         </p>
 
         <h2 style={{ color: "gold", marginTop: "40px" }}>
-          Our Mission
+          Our Missions
         </h2>
 
         <p style={{ marginTop: "15px" }}>
           To provide high-quality, hygienic, and affordable meals that make
-          every student feel like royalty.
+          every customer feel like royalty.
         </p>
 
         <h2 style={{ color: "gold", marginTop: "40px" }}>
@@ -60,7 +60,7 @@ function About() {
         </h2>
 
         <ul style={{ marginTop: "15px", paddingLeft: "20px" }}>
-          <li>✔ Affordable student-friendly pricing</li>
+          <li>✔ Affordable customer-friendly pricing</li>
           <li>✔ Fast and reliable service</li>
           <li>✔ Clean and hygienic environment</li>
           <li>✔ Delicious meals made with care</li>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { addOrder } from "../data/orders";
 import { useLocation } from "react-router-dom";
 import logo from "../assets/images/logo.png";
@@ -6,22 +6,32 @@ import logo from "../assets/images/logo.png";
 function Order() {
 
   const location = useLocation();
-
   const preselectedMeal = location.state?.meal || "";
 
   const [orderType, setOrderType] = useState("");
+  const [cart, setCart] = useState([]);
+
+  const [selectedMeal, setSelectedMeal] = useState("");
+  const [quantity, setQuantity] = useState(1);
+
   const [showWhatsapp, setShowWhatsapp] = useState(false);
   const [whatsappLink, setWhatsappLink] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    meal: preselectedMeal,
-    quantity: 1,
     location: "",
     note: "",
     payment: ""
   });
+
+  /* Auto add meal if coming from Menu */
+
+  useEffect(() => {
+    if (preselectedMeal) {
+      setCart([{ meal: preselectedMeal, quantity: 1 }]);
+    }
+  }, [preselectedMeal]);
 
   const handleChange = (e) => {
     setFormData({
@@ -29,6 +39,50 @@ function Order() {
       [e.target.name]: e.target.value
     });
   };
+
+  /* Add meal to cart */
+
+  const addMeal = () => {
+
+    if (!selectedMeal) {
+      alert("Please select a meal");
+      return;
+    }
+
+    const existing = cart.find((item) => item.meal === selectedMeal);
+
+    if (existing) {
+
+      const updatedCart = cart.map((item) =>
+        item.meal === selectedMeal
+          ? { ...item, quantity: item.quantity + Number(quantity) }
+          : item
+      );
+
+      setCart(updatedCart);
+
+    } else {
+
+      const item = {
+        meal: selectedMeal,
+        quantity: Number(quantity)
+      };
+
+      setCart([...cart, item]);
+    }
+
+    setSelectedMeal("");
+    setQuantity(1);
+  };
+
+  /* Remove item */
+
+  const removeItem = (index) => {
+    const updated = cart.filter((_, i) => i !== index);
+    setCart(updated);
+  };
+
+  /* Submit order */
 
   const handleSubmit = (e) => {
 
@@ -39,12 +93,16 @@ function Order() {
       return;
     }
 
+    if (cart.length === 0) {
+      alert("Please add at least one meal");
+      return;
+    }
+
     const orderData = {
       id: Date.now(),
       name: formData.name,
       phone: formData.phone,
-      meal: formData.meal,
-      quantity: formData.quantity,
+      meals: cart,
       location: formData.location,
       note: formData.note,
       payment: formData.payment,
@@ -55,13 +113,19 @@ function Order() {
 
     addOrder(orderData);
 
+    const mealList = cart
+      .map((item) => `${item.meal} x${item.quantity}`)
+      .join("\n");
+
     const message = `
 NEW ORDER
 
 Name: ${formData.name}
 Phone: ${formData.phone}
-Meal: ${formData.meal}
-Quantity: ${formData.quantity}
+
+Meals:
+${mealList}
+
 Type: ${orderType}
 Location: ${formData.location}
 Payment: ${formData.payment}
@@ -81,11 +145,11 @@ Note: ${formData.note}
 
     alert("Order received successfully!");
 
+    setCart([]);
+
     setFormData({
       name: "",
       phone: "",
-      meal: "",
-      quantity: 1,
       location: "",
       note: "",
       payment: ""
@@ -117,13 +181,7 @@ Note: ${formData.note}
         <button
           type="button"
           onClick={() => setOrderType("Delivery")}
-          style={{
-            padding: "12px 25px",
-            background: orderType === "Delivery" ? "gold" : "#111",
-            color: orderType === "Delivery" ? "black" : "white",
-            border: "1px solid gold",
-            borderRadius: "6px"
-          }}
+          style={buttonStyle(orderType === "Delivery")}
         >
           Delivery
         </button>
@@ -131,13 +189,7 @@ Note: ${formData.note}
         <button
           type="button"
           onClick={() => setOrderType("Pickup")}
-          style={{
-            padding: "12px 25px",
-            background: orderType === "Pickup" ? "gold" : "#111",
-            color: orderType === "Pickup" ? "black" : "white",
-            border: "1px solid gold",
-            borderRadius: "6px"
-          }}
+          style={buttonStyle(orderType === "Pickup")}
         >
           Pickup
         </button>
@@ -146,20 +198,7 @@ Note: ${formData.note}
 
       {orderType && (
 
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            maxWidth: "600px",
-            margin: "auto",
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-            background: "rgba(0,0,0,0.85)",
-            padding: "30px",
-            borderRadius: "10px",
-            border: "1px solid gold"
-          }}
-        >
+        <form onSubmit={handleSubmit} style={formStyle}>
 
           <input
             type="text"
@@ -181,35 +220,78 @@ Note: ${formData.note}
             style={inputStyle}
           />
 
-          <select
-            name="meal"
-            required
-            value={formData.meal}
-            onChange={handleChange}
-            style={inputStyle}
-          >
+          {/* Add Meals */}
 
-            <option value="">Select Meal</option>
+          <div style={{ display: "flex", gap: "10px" }}>
 
-            <option>Big Shawarma</option>
-            <option>Jumbo Shawarma</option>
-            <option>Super Jumbo Shawarma</option>
-            <option>Burger</option>
-            <option>Chicken & Chips</option>
-            <option>Barbecue</option>
-            <option>Jollof Rice + Chicken</option>
-            <option>Fried Rice + Chicken</option>
+            <select
+              value={selectedMeal}
+              onChange={(e) => setSelectedMeal(e.target.value)}
+              style={inputStyle}
+            >
 
-          </select>
+              <option value="">Select Meal</option>
 
-          <input
-            type="number"
-            name="quantity"
-            min="1"
-            value={formData.quantity}
-            onChange={handleChange}
-            style={inputStyle}
-          />
+              <option>Big Shawarma</option>
+              <option>Jumbo Shawarma</option>
+              <option>Super Jumbo Shawarma</option>
+              <option>Burger</option>
+              <option>Chicken & Chips</option>
+              <option>Barbecue</option>
+              <option>Jollof Rice + Chicken</option>
+              <option>Fried Rice + Chicken</option>
+              <option>Meat Pie</option>
+              <option>Cake</option>
+
+            </select>
+
+            <input
+              type="number"
+              min="1"
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
+              style={inputStyle}
+            />
+
+            <button
+              type="button"
+              onClick={addMeal}
+              style={addBtn}
+            >
+              Add
+            </button>
+
+          </div>
+
+          {/* Cart */}
+
+          {cart.length > 0 && (
+
+            <div style={cartBox}>
+
+              <h3 style={{ color: "gold" }}>Your Order</h3>
+
+              {cart.map((item, index) => (
+
+                <div key={index} style={{ display: "flex", justifyContent: "space-between" }}>
+
+                  <p>{item.meal} x{item.quantity}</p>
+
+                  <button
+                    type="button"
+                    onClick={() => removeItem(index)}
+                    style={removeBtn}
+                  >
+                    Remove
+                  </button>
+
+                </div>
+
+              ))}
+
+            </div>
+
+          )}
 
           {orderType === "Delivery" && (
             <input
@@ -243,17 +325,7 @@ Note: ${formData.note}
             <option value="transfer">Bank Transfer</option>
           </select>
 
-          <button
-            type="submit"
-            style={{
-              background: "gold",
-              color: "black",
-              padding: "15px",
-              border: "none",
-              fontWeight: "bold",
-              borderRadius: "8px"
-            }}
-          >
+          <button type="submit" style={submitBtn}>
             Submit Order
           </button>
 
@@ -284,12 +356,63 @@ Note: ${formData.note}
   );
 }
 
+const buttonStyle = (active) => ({
+  padding: "12px 25px",
+  background: active ? "gold" : "#111",
+  color: active ? "black" : "white",
+  border: "1px solid gold",
+  borderRadius: "6px"
+});
+
+const formStyle = {
+  maxWidth: "600px",
+  margin: "auto",
+  display: "flex",
+  flexDirection: "column",
+  gap: "20px",
+  background: "rgba(0,0,0,0.85)",
+  padding: "30px",
+  borderRadius: "10px",
+  border: "1px solid gold"
+};
+
 const inputStyle = {
   padding: "12px",
   borderRadius: "6px",
   border: "1px solid gold",
   background: "#111",
   color: "white"
+};
+
+const cartBox = {
+  background: "#111",
+  border: "1px solid gold",
+  padding: "15px",
+  borderRadius: "6px"
+};
+
+const addBtn = {
+  background: "gold",
+  border: "none",
+  padding: "10px",
+  borderRadius: "6px"
+};
+
+const removeBtn = {
+  background: "red",
+  color: "white",
+  border: "none",
+  padding: "6px",
+  borderRadius: "5px"
+};
+
+const submitBtn = {
+  background: "gold",
+  color: "black",
+  padding: "15px",
+  border: "none",
+  fontWeight: "bold",
+  borderRadius: "8px"
 };
 
 const whatsappBtn = {
