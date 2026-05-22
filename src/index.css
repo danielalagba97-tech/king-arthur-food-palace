@@ -70,8 +70,8 @@ html {
     gap: 15px;
   }
 
-  /* This forces the top hero container down on mobile screens to clear the navbar */
-  .hero-section {
+  /* Fixed: Targets both the homepage hero and menu page wrapper on mobile screens */
+  .hero-section, .menu-page {
     padding-top: 180px !important;
   }
 
