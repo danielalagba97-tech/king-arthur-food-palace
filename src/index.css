@@ -70,9 +70,16 @@ html {
     gap: 15px;
   }
 
-  /* Fixed 120px padding at the top so text clears the navbar */
-  section {
-    padding: 120px 20px 40px 20px !important;
+  /* Pushes the active page down dynamically by 180px on mobile screens.
+    This guarantees your page headings and food items sit completely below the layout of your navbar.
+  */
+  #root > div,
+  section,
+  main,
+  div[class*="page"],
+  .home,
+  .menu {
+    padding-top: 180px !important;
   }
 
   h1 {
