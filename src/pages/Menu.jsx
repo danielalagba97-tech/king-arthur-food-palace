@@ -38,6 +38,7 @@ function Menu() {
 
   return (
     <div
+      className="menu-page"
       style={{
         padding: "60px",
         minHeight: "100vh",
