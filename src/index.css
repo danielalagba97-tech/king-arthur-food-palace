@@ -65,18 +65,39 @@ html {
 /* Mobile Screens Layout Adjustments */
 @media (max-width: 768px) {
 
+  /* Keeps the navbar horizontal like the laptop layout instead of a column column */
   nav {
-    flex-direction: column;
-    gap: 15px;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 10px 15px !important;
+    gap: 8px !important;
   }
 
-  /* Fixed: Targets both the homepage hero and menu page wrapper on mobile screens */
-  .hero-section, .menu-page {
-    padding-top: 180px !important;
+  /* Shrinks the main text title so it fits alongside the logo on one line */
+  nav h1, nav .logo-text {
+    font-size: 1.1rem !important;
+  }
+
+  /* Shrinks the logo image slightly to save space */
+  nav img {
+    height: 40px !important;
+    width: 40px !important;
+  }
+
+  /* Makes the navigation menu links smaller and closer together */
+  nav a, nav ul, nav div {
+    font-size: 0.85rem !important;
+    gap: 10px !important;
+  }
+
+  /* Reduces page top spacing because the navbar is thin and short again */
+  .hero-section, .menu-page, .order-page {
+    padding-top: 100px !important;
   }
 
   h1 {
-    font-size: 2rem !important;
+    font-size: 1.8rem !important;
   }
 
   .dish-card {
