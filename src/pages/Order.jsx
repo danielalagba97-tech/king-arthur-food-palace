@@ -58,7 +58,7 @@ function Order() {
     });
   };
 
-  /* Add meal */
+   Add meal 
   const addMeal = () => {
     if (!selectedMeal) {
       alert("Please select a meal");
