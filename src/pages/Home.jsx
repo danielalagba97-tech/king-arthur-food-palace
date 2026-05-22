@@ -10,17 +10,20 @@ function Home() {
     <div>
 
       {/* Hero Section */}
-      <section style={{
-        minHeight: "85vh",
-        padding: "40px 20px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        background: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url(${foodpalace}) center/cover`,
-        color: "gold",
-        textAlign: "center"
-      }}>
+      <section 
+        className="hero-section"
+        style={{
+          minHeight: "85vh",
+          padding: "40px 20px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          background: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url(${foodpalace}) center/cover`,
+          color: "gold",
+          textAlign: "center"
+        }}
+      >
 
         <h1 style={{ fontSize: "3rem" }}>Eat Like Royalty 👑</h1>
 
