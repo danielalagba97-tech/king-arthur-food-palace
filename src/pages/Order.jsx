@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 
 /* Meal Prices */
+
 const mealPrices = {
   "Big Shawarma": 3000,
   "Jumbo Shawarma": 3500,
@@ -18,6 +19,7 @@ const mealPrices = {
 };
 
 function Order() {
+
   const location = useLocation();
   const preselectedMeal = location.state?.meal || "";
 
@@ -39,6 +41,7 @@ function Order() {
   });
 
   /* Auto add meal from menu */
+
   useEffect(() => {
     if (preselectedMeal) {
       setCart([{ meal: preselectedMeal, quantity: 1 }]);
@@ -46,6 +49,7 @@ function Order() {
   }, [preselectedMeal]);
 
   /* Calculate total */
+
   const total = cart.reduce((sum, item) => {
     const price = mealPrices[item.meal] || 0;
     return sum + price * item.quantity;
@@ -58,8 +62,10 @@ function Order() {
     });
   };
 
-   Add meal 
+  /* Add meal */
+
   const addMeal = () => {
+
     if (!selectedMeal) {
       alert("Please select a meal");
       return;
@@ -68,17 +74,22 @@ function Order() {
     const existing = cart.find((item) => item.meal === selectedMeal);
 
     if (existing) {
+
       const updatedCart = cart.map((item) =>
         item.meal === selectedMeal
           ? { ...item, quantity: item.quantity + Number(quantity) }
           : item
       );
+
       setCart(updatedCart);
+
     } else {
+
       const item = {
         meal: selectedMeal,
         quantity: Number(quantity)
       };
+
       setCart([...cart, item]);
     }
 
@@ -87,13 +98,16 @@ function Order() {
   };
 
   /* Remove item */
+
   const removeItem = (index) => {
     const updated = cart.filter((_, i) => i !== index);
     setCart(updated);
   };
 
   /* Submit order */
+
   const handleSubmit = (e) => {
+
     e.preventDefault();
 
     if (!orderType) {
@@ -147,6 +161,7 @@ Note: ${formData.note}
 `;
 
     const whatsappNumber = "2349132665527";
+
     const whatsappURL =
       "https://wa.me/" +
       whatsappNumber +
@@ -157,7 +172,9 @@ Note: ${formData.note}
     setShowWhatsapp(true);
 
     alert("Order received successfully!");
+
     setCart([]);
+
     setFormData({
       name: "",
       phone: "",
@@ -165,6 +182,7 @@ Note: ${formData.note}
       note: "",
       payment: ""
     });
+
     setOrderType("");
   };
 
@@ -172,7 +190,7 @@ Note: ${formData.note}
     <div
       className="order-page"
       style={{
-        padding: "140px 20px 60px 20px",
+        padding: "60px",
         minHeight: "100vh",
         color: "white",
         backgroundImage: `linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url(${logo})`,
@@ -180,12 +198,15 @@ Note: ${formData.note}
         backgroundPosition: "center"
       }}
     >
+
       <h1 style={{ textAlign: "center", color: "gold", marginBottom: "40px" }}>
         Place Your Order 🍔
       </h1>
 
       {/* Delivery / Pickup */}
+
       <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginBottom: "40px" }}>
+
         <button
           type="button"
           onClick={() => setOrderType("Delivery")}
@@ -201,10 +222,13 @@ Note: ${formData.note}
         >
           Pickup
         </button>
+
       </div>
 
       {orderType && (
+
         <form onSubmit={handleSubmit} style={formStyle}>
+
           <input
             type="text"
             name="name"
@@ -225,16 +249,22 @@ Note: ${formData.note}
             style={inputStyle}
           />
 
+          {/* Add Meals */}
+
           <div style={{ display: "flex", gap: "10px" }}>
+
             <select
               value={selectedMeal}
               onChange={(e) => setSelectedMeal(e.target.value)}
-              style={{ ...inputStyle, flex: 2 }}
+              style={inputStyle}
             >
+
               <option value="">Select Meal</option>
+
               {Object.keys(mealPrices).map((meal) => (
                 <option key={meal}>{meal}</option>
               ))}
+
             </select>
 
             <input
@@ -242,7 +272,7 @@ Note: ${formData.note}
               min="1"
               value={quantity}
               onChange={(e) => setQuantity(Number(e.target.value))}
-              style={{ ...inputStyle, width: "70px" }}
+              style={inputStyle}
             />
 
             <button
@@ -252,18 +282,29 @@ Note: ${formData.note}
             >
               Add
             </button>
+
           </div>
 
+          {/* Cart */}
+
           {cart.length > 0 && (
+
             <div style={cartBox}>
-              <h3 style={{ color: "gold", marginBottom: "10px" }}>Your Order</h3>
+
+              <h3 style={{ color: "gold" }}>Your Order</h3>
+
               {cart.map((item, index) => {
+
                 const price = mealPrices[item.meal] || 0;
+
                 return (
-                  <div key={index} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                    <p style={{ margin: 0 }}>
+
+                  <div key={index} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+
+                    <p>
                       {item.meal} x{item.quantity} — ₦{price * item.quantity}
                     </p>
+
                     <button
                       type="button"
                       onClick={() => removeItem(index)}
@@ -271,13 +312,19 @@ Note: ${formData.note}
                     >
                       Remove
                     </button>
+
                   </div>
+
                 );
+
               })}
-              <h3 style={{ color: "gold", marginTop: "15px" }}>
+
+              <h3 style={{ color: "gold", marginTop: "10px" }}>
                 Total: ₦{total}
               </h3>
+
             </div>
+
           )}
 
           {orderType === "Delivery" && (
@@ -315,12 +362,17 @@ Note: ${formData.note}
           <button type="submit" style={submitBtn}>
             Submit Order
           </button>
+
         </form>
+
       )}
 
       {showWhatsapp && (
-        <div style={{ textAlign: "center", marginTop: "40px" }}>
+
+        <div style={{ textalign: "center", marginTop: "40px" }}>
+
           <h2 style={{ color: "gold" }}>Order Saved</h2>
+
           <a
             href={whatsappLink}
             target="_blank"
@@ -329,8 +381,11 @@ Note: ${formData.note}
           >
             Send Order to WhatsApp
           </a>
+
         </div>
+
       )}
+
     </div>
   );
 }
@@ -340,8 +395,7 @@ const buttonStyle = (active) => ({
   background: active ? "gold" : "#111",
   color: active ? "black" : "white",
   border: "1px solid gold",
-  borderRadius: "6px",
-  cursor: "pointer"
+  borderRadius: "6px"
 });
 
 const formStyle = {
@@ -373,21 +427,17 @@ const cartBox = {
 
 const addBtn = {
   background: "gold",
-  color: "black",
   border: "none",
-  padding: "10px 20px",
-  borderRadius: "6px",
-  fontWeight: "bold",
-  cursor: "pointer"
+  padding: "10px",
+  borderRadius: "6px"
 };
 
 const removeBtn = {
   background: "red",
   color: "white",
   border: "none",
-  padding: "6px 12px",
-  borderRadius: "5px",
-  cursor: "pointer"
+  padding: "6px",
+  borderRadius: "5px"
 };
 
 const submitBtn = {
@@ -396,8 +446,7 @@ const submitBtn = {
   padding: "15px",
   border: "none",
   fontWeight: "bold",
-  borderRadius: "8px",
-  cursor: "pointer"
+  borderRadius: "8px"
 };
 
 const whatsappBtn = {
