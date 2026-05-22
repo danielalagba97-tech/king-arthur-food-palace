@@ -188,6 +188,7 @@ Note: ${formData.note}
 
   return (
     <div
+      className="order-page"
       style={{
         padding: "60px",
         minHeight: "100vh",
@@ -248,7 +249,7 @@ Note: ${formData.note}
             style={inputStyle}
           />
 
-          {/* Add Meals */}
+          /* Add Meals */
 
           <div style={{ display: "flex", gap: "10px" }}>
 
@@ -284,7 +285,7 @@ Note: ${formData.note}
 
           </div>
 
-          {/* Cart */}
+          /* Cart */
 
           {cart.length > 0 && (
 
