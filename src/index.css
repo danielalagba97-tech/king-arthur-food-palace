@@ -62,7 +62,7 @@ html {
   box-shadow: 0 0 15px gold;
 }
 
-/* Mobile Screens (Fixes content hidden behind navigation bar) */
+/* Mobile Screens Layout Adjustments */
 @media (max-width: 768px) {
 
   nav {
@@ -70,15 +70,8 @@ html {
     gap: 15px;
   }
 
-  /* Pushes the active page down dynamically by 180px on mobile screens.
-    This guarantees your page headings and food items sit completely below the layout of your navbar.
-  */
-  #root > div,
-  section,
-  main,
-  div[class*="page"],
-  .home,
-  .menu {
+  /* This forces the top hero container down on mobile screens to clear the navbar */
+  .hero-section {
     padding-top: 180px !important;
   }
 
