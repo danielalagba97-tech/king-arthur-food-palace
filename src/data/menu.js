@@ -1,4 +1,3 @@
-// Default initial menu items if localStorage is empty
 const defaultMenu = [
   { id: 1, name: "Jollof Rice Combo", price: 2500, category: "Meals", available: true },
   { id: 2, name: "Fried Rice & Chicken", price: 3000, category: "Meals", available: true },
@@ -6,7 +5,6 @@ const defaultMenu = [
   { id: 4, name: "Chilled Soft Drink", price: 500, category: "Drinks", available: true }
 ];
 
-// Fetch all menu items
 export const getMenu = () => {
   const menu = localStorage.getItem("king_arthur_menu");
   if (!menu) {
@@ -16,20 +14,14 @@ export const getMenu = () => {
   return JSON.parse(menu);
 };
 
-// Add a new food item
 export const addMenuItem = (item) => {
   const currentMenu = getMenu();
-  const newItem = {
-    id: Date.now(),
-    available: true,
-    ...item
-  };
+  const newItem = { id: Date.now(), available: true, ...item };
   const updatedMenu = [...currentMenu, newItem];
   localStorage.setItem("king_arthur_menu", JSON.stringify(updatedMenu));
   return updatedMenu;
 };
 
-// Delete a food item
 export const deleteMenuItem = (id) => {
   const currentMenu = getMenu();
   const updatedMenu = currentMenu.filter(item => item.id !== id);
@@ -37,7 +29,6 @@ export const deleteMenuItem = (id) => {
   return updatedMenu;
 };
 
-// Toggle availability (In Stock / Out of Stock)
 export const toggleAvailability = (id) => {
   const currentMenu = getMenu();
   const updatedMenu = currentMenu.map(item => 
@@ -46,3 +37,7 @@ export const toggleAvailability = (id) => {
   localStorage.setItem("king_arthur_menu", JSON.stringify(updatedMenu));
   return updatedMenu;
 };
+
+// Add a solid default export wrapper to make the bundler happy
+const menuService = { getMenu, addMenuItem, deleteMenuItem, toggleAvailability };
+export default menuService;
