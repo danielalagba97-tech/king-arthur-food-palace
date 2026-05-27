@@ -10,7 +10,6 @@ import Contact from "./pages/Contact";
 import Order from "./pages/Order";
 
 /* Admin Pages */
-
 import Login from "./admin/Login";
 import AdminLayout from "./admin/AdminLayout";
 import Dashboard from "./admin/Dashboard";
@@ -22,11 +21,8 @@ import Analytics from "./admin/Analytics";
 import "./index.css";
 
 function App() {
-
   return (
-
     <Router>
-
       <Navbar />
 
       <a
@@ -49,9 +45,7 @@ function App() {
       </a>
 
       <Routes>
-
         {/* Website Pages */}
-
         <Route path="/" element={<Home />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/about" element={<About />} />
@@ -59,33 +53,21 @@ function App() {
         <Route path="/order" element={<Order />} />
 
         {/* Admin Login */}
-
         <Route path="/admin-login" element={<Login />} />
 
         {/* Admin Panel */}
-
         <Route path="/admin" element={<AdminLayout />}>
-
           <Route index element={<Dashboard />} />
-
           <Route path="orders" element={<Orders />} />
-
           <Route path="menu" element={<MenuManager />} />
-
           <Route path="payments" element={<Payments />} />
-
           <Route path="analytics" element={<Analytics />} />
-
         </Route>
-
       </Routes>
 
       <Footer />
-
     </Router>
-
   );
-
 }
 
 export default App;
