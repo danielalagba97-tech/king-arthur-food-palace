@@ -5,7 +5,7 @@ const defaultMenu = [
   { id: 4, name: "Chilled Soft Drink", price: 500, category: "Drinks", available: true }
 ];
 
-export const getMenu = () => {
+const getMenu = () => {
   const menu = localStorage.getItem("king_arthur_menu");
   if (!menu) {
     localStorage.setItem("king_arthur_menu", JSON.stringify(defaultMenu));
@@ -14,7 +14,7 @@ export const getMenu = () => {
   return JSON.parse(menu);
 };
 
-export const addMenuItem = (item) => {
+const addMenuItem = (item) => {
   const currentMenu = getMenu();
   const newItem = { id: Date.now(), available: true, ...item };
   const updatedMenu = [...currentMenu, newItem];
@@ -22,14 +22,14 @@ export const addMenuItem = (item) => {
   return updatedMenu;
 };
 
-export const deleteMenuItem = (id) => {
+const deleteMenuItem = (id) => {
   const currentMenu = getMenu();
   const updatedMenu = currentMenu.filter(item => item.id !== id);
   localStorage.setItem("king_arthur_menu", JSON.stringify(updatedMenu));
   return updatedMenu;
 };
 
-export const toggleAvailability = (id) => {
+const toggleAvailability = (id) => {
   const currentMenu = getMenu();
   const updatedMenu = currentMenu.map(item => 
     item.id === id ? { ...item, available: !item.available } : item
@@ -38,6 +38,10 @@ export const toggleAvailability = (id) => {
   return updatedMenu;
 };
 
-// Add a solid default export wrapper to make the bundler happy
-const menuService = { getMenu, addMenuItem, deleteMenuItem, toggleAvailability };
-export default menuService;
+// One clean default export. No mixed syntax.
+export default {
+  getMenu,
+  addMenuItem,
+  deleteMenuItem,
+  toggleAvailability
+};
