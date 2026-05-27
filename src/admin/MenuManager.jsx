@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { getMenu, addMenuItem, deleteMenuItem, toggleAvailability } from "../data/menu";
+// Safer relative import path syntax
+import * as menuData from "../data/menu";
 
 function MenuManager() {
   const [menuItems, setMenuItems] = useState([]);
@@ -7,39 +8,43 @@ function MenuManager() {
   const [newPrice, setNewPrice] = useState("");
   const [newCategory, setNewCategory] = useState("Meals");
 
-  // Load menu items on start
+  // Safety fallback if data layer has compile lag
+  const getMenuList = () => (menuData && menuData.getMenu ? menuData.getMenu() : []);
+
   useEffect(() => {
-    setMenuItems(getMenu());
+    setMenuItems(getMenuList());
   }, []);
 
-  // Handle adding a new item
   const handleAddItem = (e) => {
     e.preventDefault();
     if (!newName || !newPrice) return alert("Please fill in all fields");
 
-    const updated = addMenuItem({
-      name: newName,
-      price: Number(newPrice),
-      category: newCategory
-    });
-
-    setMenuItems(updated);
+    if (menuData && menuData.addMenuItem) {
+      const updated = menuData.addMenuItem({
+        name: newName,
+        price: Number(newPrice),
+        category: newCategory
+      });
+      setMenuItems(updated);
+    }
     setNewName("");
     setNewPrice("");
   };
 
-  // Handle deleting an item
   const handleDeleteItem = (id) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
-      const updated = deleteMenuItem(id);
-      setMenuItems(updated);
+      if (menuData && menuData.deleteMenuItem) {
+        const updated = menuData.deleteMenuItem(id);
+        setMenuItems(updated);
+      }
     }
   };
 
-  // Toggle item availability
   const handleToggleStock = (id) => {
-    const updated = toggleAvailability(id);
-    setMenuItems(updated);
+    if (menuData && menuData.toggleAvailability) {
+      const updated = menuData.toggleAvailability(id);
+      setMenuItems(updated);
+    }
   };
 
   return (
@@ -117,46 +122,56 @@ function MenuManager() {
             </tr>
           </thead>
           <tbody>
-            {menuItems.map((item) => (
-              <tr key={item.id} style={{ borderBottom: "1px solid #222" }}>
-                <td style={{ ...thTdStyle, fontWeight: "bold" }}>{item.name}</td>
-                <td style={thTdStyle}>{item.category}</td>
-                <td style={{ ...thTdStyle, color: "gold" }}>₦{item.price}</td>
-                <td style={thTdStyle}>
-                  <button
-                    onClick={() => handleToggleStock(item.id)}
-                    style={{
-                      padding: "4px 10px",
-                      background: item.available ? "#1b4d22" : "#611a15",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      fontSize: "0.8rem",
-                      fontWeight: "bold"
-                    }}
-                  >
-                    {item.available ? "🟢 In Stock" : "🔴 Out of Stock"}
-                  </button>
-                </td>
-                <td style={thTdStyle}>
-                  <button
-                    onClick={() => handleDeleteItem(item.id)}
-                    style={{
-                      padding: "4px 10px",
-                      background: "transparent",
-                      color: "#ff4d4d",
-                      border: "1px solid #ff4d4d",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      fontSize: "0.8rem"
-                    }}
-                  >
-                    🗑️ Delete
-                  </button>
+            {menuItems.length === 0 ? (
+              <tr>
+                <td colSpan="5" style={{ padding: "20px", textAlign: "center", color: "#666" }}>
+                  No items in menu list. Add one above!
                 </td>
               </tr>
-            ))}
+            ) : (
+              menuItems.map((item) => (
+                <tr key={item.id} style={{ borderBottom: "1px solid #222" }}>
+                  <td style={{ ...thTdStyle, fontWeight: "bold" }}>{item.name}</td>
+                  <td style={thTdStyle}>{item.category}</td>
+                  <td style={{ ...thTdStyle, color: "gold" }}>₦{item.price}</td>
+                  <td style={thTdStyle}>
+                    <button
+                      type="button"
+                      onClick={() => handleToggleStock(item.id)}
+                      style={{
+                        padding: "4px 10px",
+                        background: item.available ? "#1b4d22" : "#611a15",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        fontSize: "0.8rem",
+                        fontWeight: "bold"
+                      }}
+                    >
+                      {item.available ? "🟢 In Stock" : "🔴 Out of Stock"}
+                    </button>
+                  </td>
+                  <td style={thTdStyle}>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteItem(item.id)}
+                      style={{
+                        padding: "4px 10px",
+                        background: "transparent",
+                        color: "#ff4d4d",
+                        border: "1px solid #ff4d4d",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        fontSize: "0.8rem"
+                      }}
+                    >
+                      🗑️ Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
