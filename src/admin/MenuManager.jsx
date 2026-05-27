@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-// Safer relative import path syntax
-import * as menuData from "../data/menu";
+import menuService from "../data/menu";
 
 function MenuManager() {
   const [menuItems, setMenuItems] = useState([]);
@@ -8,19 +7,18 @@ function MenuManager() {
   const [newPrice, setNewPrice] = useState("");
   const [newCategory, setNewCategory] = useState("Meals");
 
-  // Safety fallback if data layer has compile lag
-  const getMenuList = () => (menuData && menuData.getMenu ? menuData.getMenu() : []);
-
   useEffect(() => {
-    setMenuItems(getMenuList());
+    if (menuService && menuService.getMenu) {
+      setMenuItems(menuService.getMenu());
+    }
   }, []);
 
   const handleAddItem = (e) => {
     e.preventDefault();
     if (!newName || !newPrice) return alert("Please fill in all fields");
 
-    if (menuData && menuData.addMenuItem) {
-      const updated = menuData.addMenuItem({
+    if (menuService && menuService.addMenuItem) {
+      const updated = menuService.addMenuItem({
         name: newName,
         price: Number(newPrice),
         category: newCategory
@@ -33,16 +31,16 @@ function MenuManager() {
 
   const handleDeleteItem = (id) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
-      if (menuData && menuData.deleteMenuItem) {
-        const updated = menuData.deleteMenuItem(id);
+      if (menuService && menuService.deleteMenuItem) {
+        const updated = menuService.deleteMenuItem(id);
         setMenuItems(updated);
       }
     }
   };
 
   const handleToggleStock = (id) => {
-    if (menuData && menuData.toggleAvailability) {
-      const updated = menuData.toggleAvailability(id);
+    if (menuService && menuService.toggleAvailability) {
+      const updated = menuService.toggleAvailability(id);
       setMenuItems(updated);
     }
   };
@@ -54,7 +52,6 @@ function MenuManager() {
         <p style={{ color: "#aaa", margin: "5px 0 0 0" }}>Add, remove, or toggle food stock status</p>
       </div>
 
-      {/* Add New Item Form */}
       <form 
         onSubmit={handleAddItem}
         style={{
@@ -109,7 +106,6 @@ function MenuManager() {
         </button>
       </form>
 
-      {/* Menu List Display Table */}
       <div style={{ background: "#111", borderRadius: "8px", border: "1px solid #222", overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
           <thead>
